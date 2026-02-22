@@ -15,6 +15,7 @@ const otpStore = {};
 // Middleware
 app.use(requestLogger);
 app.use(express.json());
+app.use(cookieParser());
 
 
 app.get("/", (req, res) => {
@@ -88,6 +89,9 @@ app.post("/auth/verify-otp", (req, res) => {
       return res.status(401).json({ error: "Invalid OTP" });
     }
 
+    // Mark session as verified
+    session.verified = true;
+
     res.cookie("session_token", loginSessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
@@ -111,18 +115,26 @@ app.post("/auth/verify-otp", (req, res) => {
 
 app.post("/auth/token", (req, res) => {
   try {
-    const token = req.headers.authorization;
+    const sessionToken = req.cookies.session_token;
 
-    if (!token) {
+    if (!sessionToken) {
       return res
         .status(401)
         .json({ error: "Unauthorized - valid session required" });
     }
 
-    const session = loginSessions[token.replace("Bearer ", "")];
+    const session = loginSessions[sessionToken];
 
     if (!session) {
       return res.status(401).json({ error: "Invalid session" });
+    }
+
+    if (Date.now() > session.expiresAt) {
+      return res.status(401).json({ error: "Session expired" });
+    }
+
+    if (!session.verified) {
+      return res.status(401).json({ error: "OTP not verified" });
     }
 
     // Generate JWT
@@ -131,7 +143,7 @@ app.post("/auth/token", (req, res) => {
     const accessToken = jwt.sign(
       {
         email: session.email,
-        sessionId: token,
+        sessionId: sessionToken,
       },
       secret,
       {
