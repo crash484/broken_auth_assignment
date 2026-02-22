@@ -1,16 +1,16 @@
 Task 1
-Command: curl -X POST http://localhost:3000/auth/login -H "Content-Type: application/json" -d '{"email":"awesomedude019@example.com","password":"password123"}'
-Response: {"message":"OTP sent","loginSessionId":"x35wfh"}
-(Server logs show: [OTP] Session x35wfh generated, otp is 105381)
+Command: curl -X POST http://localhost:3001/auth/login -H "Content-Type: application/json" -d '{"email":"awe@gmail.com","password":"password123"}'
+{"message":"OTP verified","sessionId":"8zqra"}
+(Server logs show: [OTP] Session 8zqra generated, otp is 262401)
 
 Task 2
-Command: curl -c cookies.txt -X POST http://localhost:3000/auth/verify-otp -H "Content-Type: application/json" -d '{"loginSessionId":"x35wfh","otp":"105381"}'
-{"message":"OTP verified","sessionId":"x35wfh"}
+Command: curl -c cookies.txt -X POST http://localhost:3001/auth/verify-otp -H "Content-Type: application/json" -d '{"loginSessionId":"x35wfh","otp":"105381"}'
+{"message":"OTP verified","sessionId":"8zqra"}
 
 Task 3
-Command: curl -b cookies.txt -X POST http://localhost:3000/auth/token
-{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAZXhhbXBsZS5jb20iLCJzZXNzaW9uSWQiOiJ4MzV3ZmgiLCJpYXQiOjE3NzE3Njk1ODIsImV4cCI6MTc3MTc3MDQ4Mn0._eR_Z3QtKmYeR6gdNIyoLNg88sS6YKvQRj5RDo6onbQ","expires_in":900}
+Command: curl -b cookies.txt -X POST http://localhost:3001/auth/token
+{"access_token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImF3ZUBnbWFpbC5jb20iLCJzZXNzaW9uSWQiOiI4enFyYSIsImlhdCI6MTc3MTc2OTg5MywiZXhwIjoxNzcxNzcwNzkzfQ.4IrBrt8eWYa4zcLqGrIyFrtFfUrL2GrmeWlWu9GWhMM","expires_in":900}
 
 Task 4
-Command: curl -H "Authorization: Bearer $TOKEN" http://localhost:3000/protected
-{"message":"Access granted","user":{"email":"test@example.com","sessionId":"x35wfh","iat":1771769582,"exp":1771770482},"success_flag":"FLAG-dGVzdEBleGFtcGxlLmNvbV9DT01QTEVURURfQVNTSUdOTUVOVA=="}
+Command: curl -H "Authorization: Bearer <jwt>" http://localhost:3001/protected
+{"message":"Access granted","user":{"email":"awe@gmail.com","sessionId":"8zqra","iat":1771769893,"exp":1771770793},"success_flag":"FLAG-YXdlQGdtYWlsLmNvbV9DT01QTEVURURfQVNTSUdOTUVOVA=="}
