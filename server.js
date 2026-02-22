@@ -50,6 +50,7 @@ app.post("/auth/login", (req, res) => {
     otpStore[loginSessionId] = otp;
 
     console.log(`[OTP] Session ${loginSessionId} generated`);
+    console.log(`otp is ${otpStore[loginSessionId]}`);
 
     return res.status(200).json({
       message: "OTP sent",
@@ -93,7 +94,8 @@ app.post("/auth/verify-otp", (req, res) => {
       maxAge: 15 * 60 * 1000, // 15 minutes
     });
 
-    delete otpStore[loginSessionId];
+    //after verying session it shouldnt delete the session??
+    //delete otpStore[loginSessionId];
 
     return res.status(200).json({
       message: "OTP verified",
